@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { signOut, signIn, useSession } from 'next-auth/react';
-import { Loader2, LogOut, Menu } from 'lucide-react';
+import { Loader2, LogOut, Menu, Moon, Sun } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
@@ -21,13 +21,19 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from './ui/sheet';
+import { useTheme } from 'next-themes';
 
 const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
   const { data, status } = useSession();
+  const { theme, setTheme } = useTheme();
   const router = useRouter();
+
+  const toggleTheme = () => {
+    theme === 'light' ? setTheme('dark') : setTheme('light');
+  };
+
   return (
     <div className="border-b justify-center">
       <div className="flex h-16 items-center justify-between max-w-7xl mx-auto px-4">
@@ -59,6 +65,14 @@ const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
           </nav>
         </div>
         <div className="hidden md:flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-9 px-0"
+            onClick={() => toggleTheme()}>
+            <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
           {status === 'loading' ? (
             <Button disabled>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -88,6 +102,14 @@ const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
           )}
         </div>
         <div className="md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-9 px-0"
+            onClick={() => toggleTheme()}>
+            <Sun className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost">
@@ -95,18 +117,40 @@ const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
               </Button>
             </SheetTrigger>
             <SheetContent position="right" size="full">
-              <SheetHeader>
-                <SheetTitle>Edit profile</SheetTitle>
-                <SheetDescription>
-                  Make changes to your profile here. Click save when you&apos;re
-                  done.
-                </SheetDescription>
-              </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">Name</div>
+              <div className="grid gap-4 py-4 mt-2">
+                {status === 'authenticated' && (
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Link href="/dashboard">dashboard</Link>
+                  </div>
+                )}
                 <div className="grid grid-cols-4 items-center gap-4">
-                  Username
+                  <Link href="#">contact</Link>
                 </div>
+                {status === 'authenticated' ? (
+                  <>
+                    <div className="flex flex-row items-center justify-between">
+                      <span className="font-medium">{data?.user?.email}</span>
+                      <Avatar>
+                        <AvatarImage
+                          src={data?.user?.image!}
+                          alt="user avatar"
+                        />
+                        <AvatarFallback>
+                          {data?.user?.name?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => signOut()}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>log out</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => signIn('google')}>sign in</Button>
+                )}
               </div>
             </SheetContent>
           </Sheet>
