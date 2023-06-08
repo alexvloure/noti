@@ -1,14 +1,6 @@
-import { BellRing, Check } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from './ui/card';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
+'use client';
+
+import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 const UserCard = ({
@@ -21,7 +13,7 @@ const UserCard = ({
   imagePath: string;
 }) => {
   return (
-    <Card>
+    <Card className="hover:translate-y-[-2px] cursor-pointer">
       <CardHeader className="flex flex-row gap-5 items-center p-4">
         <Avatar className="w-[64px] h-[64px]">
           <AvatarImage src={imagePath} alt="user avatar" />

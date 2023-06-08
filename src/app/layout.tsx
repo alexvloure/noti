@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={'dark'}>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           rel="icon"
@@ -24,7 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <ProvidersWrapper>
+        <ProvidersWrapper attribute="class" defaultTheme="system" enableSystem>
           <NavBar />
           {children}
         </ProvidersWrapper>
