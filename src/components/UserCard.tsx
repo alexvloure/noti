@@ -6,20 +6,23 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 const UserCard = ({
   name,
   desc,
-  imagePath,
+  avatarPath,
 }: {
   name: string;
   desc: string;
-  imagePath: string;
+  avatarPath: string;
 }) => {
+  const fallback =
+    name.split(' ').length > 1
+      ? name?.charAt(0) + name?.split(' ')[1].charAt(0)
+      : name?.charAt(0);
+
   return (
     <Card className="hover:translate-y-[-2px] cursor-pointer">
       <CardHeader className="flex flex-row gap-5 items-center p-4">
         <Avatar className="w-[64px] h-[64px]">
-          <AvatarImage src={imagePath} alt="user avatar" />
-          <AvatarFallback>
-            {name?.charAt(0) + name?.split(' ')[1].charAt(0)}
-          </AvatarFallback>
+          <AvatarImage src={avatarPath} alt="user avatar" />
+          <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-2">
           <CardTitle>{name}</CardTitle>
