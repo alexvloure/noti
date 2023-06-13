@@ -16,13 +16,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { useRouter } from 'next/navigation';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTrigger,
-} from './ui/sheet';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from './ui/sheet';
 import { useTheme } from 'next-themes';
 
 const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
@@ -119,12 +113,18 @@ const NavBar = ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => {
             <SheetContent position="right" size="full">
               <div className="grid gap-4 py-4 mt-2">
                 {status === 'authenticated' && (
-                  <div className="grid grid-cols-4 items-center gap-4">
+                  <SheetClose
+                    asChild
+                    className="grid grid-cols-4 items-center gap-4">
                     <Link href="/dashboard">dashboard</Link>
-                  </div>
+                  </SheetClose>
                 )}
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Link href="#">contact</Link>
+                  <SheetClose
+                    asChild
+                    className="grid grid-cols-4 items-center gap-4">
+                    <Link href="#">contact</Link>
+                  </SheetClose>
                 </div>
                 {status === 'authenticated' ? (
                   <>

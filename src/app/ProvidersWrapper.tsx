@@ -1,5 +1,6 @@
 'use client';
 
+import { ClientContextProvider } from '@/context/clients';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { ThemeProviderProps } from 'next-themes/dist/types';
@@ -23,7 +24,7 @@ const ProvidersWrapper = ({
         attribute={attribute}
         defaultTheme={defaultTheme}
         enableSystem={enableSystem}>
-        {children}
+        <ClientContextProvider>{children}</ClientContextProvider>
       </NextThemesProvider>
     </SessionProvider>
   );

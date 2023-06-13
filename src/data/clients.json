@@ -2,43 +2,43 @@
   {
     "name": "John Doe",
     "desc": "Frontend Developer",
-    "image": "/userImages/user1.jpeg",
-    "id": "1"
+    "avatar": "/userImages/user1.jpeg",
+    "id": 1
   },
   {
     "name": "Mark Kowalski",
     "desc": "Fullstack Developer",
-    "image": "/userImages/user2.jpeg",
-    "id": "2"
+    "avatar": "/userImages/user2.jpeg",
+    "id": 2
   },
   {
     "name": "Laura Smith",
     "desc": "Business Analyst",
-    "image": "/userImages/user3.jpeg",
-    "id": "3"
+    "avatar": "/userImages/user3.jpeg",
+    "id": 3
   },
   {
     "name": "Paul Kendrick",
     "desc": "Solution Architect",
-    "image": "/userImages/user4.jpeg",
-    "id": "4"
+    "avatar": "/userImages/user4.jpeg",
+    "id": 4
   },
   {
     "name": "Allison Nowak",
     "desc": "Service Designer",
-    "image": "/userImages/user5.jpeg",
-    "id": "5"
+    "avatar": "/userImages/user5.jpeg",
+    "id": 5
   },
   {
     "name": "Brais Prado",
     "desc": "Backend Developer",
-    "image": "/userImages/user6.jpeg",
-    "id": "6"
+    "avatar": "/userImages/user6.jpeg",
+    "id": 6
   },
   {
     "name": "Paula Torres",
     "desc": "Backend Developer",
-    "image": "/userImages/user7.jpeg",
-    "id": "7"
+    "avatar": "/userImages/user7.jpeg",
+    "id": 7
   }
 ]

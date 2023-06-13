@@ -1,21 +1,27 @@
-import * as users from '@/data/users.json';
-import UserCard from '@/components/UserCard';
-import AddCard from '@/components/AddCard';
+'use client';
 
-const dashboard = () => {
+import UserCard from '@/components/UserCard';
+import AddClient from '@/components/AddClient';
+import Client from '@/types/client';
+import { useContext } from 'react';
+import { ClientContext } from '@/context/clients';
+
+const Dashboard = () => {
+  const { clients } = useContext(ClientContext);
+
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div className="max-w-7xl mx-auto px-4 pb-4">
       <div className="mt-14">
         <h1 className="text-[2.50rem] font-semibold">Clients</h1>
         <div className="bg-border my-12 h-[1px]" />
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <AddCard />
-          {users.map((user) => (
+          <AddClient />
+          {clients?.map((client: Client) => (
             <UserCard
-              key={user.id}
-              name={user.name}
-              desc={user.desc}
-              imagePath={user.image}
+              key={client.id}
+              name={client.name}
+              desc={client.desc}
+              avatarPath={client.avatar}
             />
           ))}
         </div>
@@ -24,4 +30,4 @@ const dashboard = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;
