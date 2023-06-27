@@ -11,7 +11,7 @@ export async function middleware(req: NextRequest) {
     // const url = req.nextUrl.clone();
     // url.pathname = '/api/auth/providers';
     // url.search = `p=${requestedPage}`;
-    return NextResponse.redirect('http://localhost:3000');
+    return NextResponse.redirect(process.env.NEXTAUTH_URL!);
   }
 
   return NextResponse.next();
