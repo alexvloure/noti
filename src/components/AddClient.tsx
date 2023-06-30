@@ -41,9 +41,7 @@ const formSchema = z.object({
   position: z.string().min(2, {
     message: 'The position must be at least 2 characters long',
   }),
-  avatar: z.instanceof(File, {
-    message: 'Please upload an image',
-  }),
+  avatar: z.custom<File>(),
 });
 
 const AddClient = () => {

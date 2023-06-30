@@ -3,8 +3,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]';
 
-// POST /api/client
-// Required fields in body: fullName, position, avatar
+// /api/client
+// POST | Required fields in body: name, position, avatar
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -21,7 +21,6 @@ export default async function handler(
     case 'POST':
       const data = JSON.parse(req.body);
       const { name, position, avatar } = data;
-      console.log(data);
       const newClient = await prisma.client.create({
         data: {
           name: name,
