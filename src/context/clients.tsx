@@ -1,7 +1,6 @@
 'use client';
 
-import clientsArr from '@/data/clients.json';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Client from '@/types/client';
 
 export const ClientContext = React.createContext({
@@ -14,7 +13,19 @@ export const ClientContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [clients, setClients] = React.useState<Client[]>(clientsArr);
+  const [clients, setClients] = React.useState<Client[]>([]);
+
+  const fetchClients = async () => {
+    const response = await fetch('/api/clients', {
+      method: 'GET',
+    });
+    const data = await response.json();
+    setClients(data);
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
   return (
     <ClientContext.Provider value={{ clients, setClients }}>

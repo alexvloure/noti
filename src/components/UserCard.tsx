@@ -18,14 +18,14 @@ import { ToastAction } from './ui/toast';
 
 const UserCard = ({
   name,
-  desc,
-  avatarPath,
+  position,
+  avatar,
   id,
 }: {
   name: string;
-  desc: string;
-  avatarPath: string;
-  id: number;
+  position: string;
+  avatar: string;
+  id: string;
 }) => {
   const { clients, setClients } = useContext(ClientContext);
   const { toast } = useToast();
@@ -38,6 +38,9 @@ const UserCard = ({
   const deleteClient = () => {
     const idTimeout = setTimeout(() => {
       const updatedClients = clients.filter((client) => client.id !== id);
+      fetch(`/api/client/${id}`, {
+        method: 'DELETE',
+      });
       setClients(updatedClients);
     }, 3000);
     toast({
@@ -58,14 +61,14 @@ const UserCard = ({
       <CardHeader className="flex flex-row items-center justify-between p-4">
         <div className="flex flex-row items-center gap-5">
           <Avatar className="w-[64px] h-[64px]">
-            <AvatarImage src={avatarPath} alt="user avatar" />
+            <AvatarImage src={avatar} alt="user avatar" />
             <AvatarFallback>{fallback}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-2">
             <CardTitle className="max-h-[18px] overflow-hidden text-ellipsis">
               {name}
             </CardTitle>
-            <CardDescription>{desc}</CardDescription>
+            <CardDescription>{position}</CardDescription>
           </div>
         </div>
         <DropdownMenu>
