@@ -1,7 +1,8 @@
 type Client = {
-  id: number;
+  authorId?: string;
+  id?: string;
   name: string;
-  desc: string;
+  position: string;
   avatar: string;
 };
 

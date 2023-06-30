@@ -21,10 +21,10 @@ const Dashboard = () => {
             {clients?.map((client: Client) => (
               <UserCard
                 key={client.id}
-                id={client.id}
+                id={client.id!}
                 name={client.name}
-                desc={client.desc}
-                avatarPath={client.avatar}
+                position={client.position}
+                avatar={client.avatar}
               />
             ))}
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Plus, X } from 'lucide-react';
+import { Loader2, Plus, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardHeader } from './ui/card';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
@@ -11,12 +11,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from './ui/dialog';
 import { Input } from './ui/input';
 import React, { useContext } from 'react';
-import clientsArr from '../data/clients.json';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarImage } from './ui/avatar';
 import { useForm } from 'react-hook-form';
 import {
   Form,
@@ -43,15 +41,14 @@ const formSchema = z.object({
   position: z.string().min(2, {
     message: 'The position must be at least 2 characters long',
   }),
-  avatar: z.string(),
+  avatar: z.custom<File>(),
 });
 
 const AddClient = () => {
   const [openDialog, setOpenDialog] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const { clients, setClients } = useContext(ClientContext);
-  const [avatarImg, setAvatarImg] = React.useState<string>(
-    '/userImages/userDefault.png'
-  );
+  const [avatarImg, setAvatarImg] = React.useState<File | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -59,41 +56,44 @@ const AddClient = () => {
     defaultValues: {
       fullName: '',
       position: '',
-      avatar: '',
+      avatar: undefined,
     },
   });
 
-  const handleImage = (image: File | null) => {
-    if (image) {
-      const base64Image = URL.createObjectURL(image);
-      setAvatarImg(base64Image);
-      return base64Image;
-    }
-  };
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const { fullName, position, avatar } = values;
-    const highestId = clientsArr
-      .map((client) => client.id)
-      .reduce((prev, curr) => {
-        return prev > curr ? prev : curr;
-      });
-
-    const newClient: Client = {
-      id: highestId + 1,
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
+    const { fullName, position } = values;
+    const formData = new FormData();
+    formData.append('file', avatarImg!);
+    formData.append('upload_preset', 'fn1pbozo');
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+    const imageData = await res.json();
+    const data = {
       name: fullName,
-      desc: position,
-      avatar: avatar,
+      position: position,
+      avatar: imageData.url,
     };
 
+    const response = await fetch('/api/clients', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    const newClient: Client = await response.json();
     setClients([...clients, newClient]);
     closeDialog();
+    setLoading(false);
   };
 
   const closeDialog = () => {
     setOpenDialog(false);
     form.reset({});
-    setAvatarImg('/userImages/userDefault.png');
+    setAvatarImg(null);
   };
 
   return (
@@ -121,33 +121,39 @@ const AddClient = () => {
                     control={form.control}
                     name="avatar"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="flex flex-col items-center">
                         <Avatar
                           className="w-[72px] h-[72px] cursor-pointer"
                           onClick={() =>
                             inputRef.current && inputRef.current.click()
                           }>
-                          <AvatarImage src={avatarImg} alt="user avatar" />
-                          <AvatarFallback>?</AvatarFallback>
+                          <AvatarImage
+                            src={
+                              avatarImg
+                                ? URL.createObjectURL(avatarImg)
+                                : '/userImages/userDefault.png'
+                            }
+                            alt="user avatar"
+                          />
                         </Avatar>
                         <FormControl>
                           <Input
                             {...field}
                             //@ts-ignore
-                            value={field.value.fileName}
+                            value={field?.value?.fileName}
                             id="avatar"
                             type="file"
+                            accept="image/*"
                             className="hidden"
                             ref={inputRef}
                             onChange={(e) => {
-                              const base64img = handleImage(
-                                e.currentTarget.files &&
-                                  e.currentTarget.files[0]
-                              );
-                              field.onChange(base64img);
+                              const file = e.currentTarget.files![0];
+                              setAvatarImg(file);
+                              field.onChange(file);
                             }}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -188,7 +194,16 @@ const AddClient = () => {
                 />
               </div>
               <DialogFooter>
-                <Button type="submit">Create</Button>
+                <Button type="submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait...
+                    </>
+                  ) : (
+                    'Create'
+                  )}
+                </Button>
               </DialogFooter>
             </form>
           </Form>
