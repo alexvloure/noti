@@ -36,12 +36,13 @@ const UserCard = ({
       : name?.charAt(0);
 
   const deleteClient = () => {
+    const prevClients = [...clients];
+    const updatedClients = clients.filter((client) => client.id !== id);
+    setClients(updatedClients);
     const idTimeout = setTimeout(() => {
-      const updatedClients = clients.filter((client) => client.id !== id);
-      fetch(`/api/client/${id}`, {
+      fetch(`/api/clients/${id}`, {
         method: 'DELETE',
       });
-      setClients(updatedClients);
     }, 3000);
     toast({
       variant: 'delete',
@@ -49,7 +50,12 @@ const UserCard = ({
       description: 'Client has been deleted successfully',
       duration: 3000,
       action: (
-        <ToastAction altText="Undo" onClick={() => clearInterval(idTimeout)}>
+        <ToastAction
+          altText="Undo"
+          onClick={() => {
+            setClients(prevClients);
+            clearInterval(idTimeout);
+          }}>
           Undo
         </ToastAction>
       ),
