@@ -28,6 +28,7 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ClientContext } from '@/context/clients';
 import Client from '@/types/client';
+import { useCloudinary } from '@/hooks/useCloudinary';
 
 const formSchema = z.object({
   fullName: z
@@ -41,7 +42,9 @@ const formSchema = z.object({
   position: z.string().min(2, {
     message: 'The position must be at least 2 characters long',
   }),
-  avatar: z.custom<File>(),
+  avatar: z.custom<File>().refine((file) => file !== undefined, {
+    message: 'Please upload an image',
+  }),
 });
 
 const AddClient = () => {
@@ -50,6 +53,7 @@ const AddClient = () => {
   const { clients, setClients } = useContext(ClientContext);
   const [avatarImg, setAvatarImg] = React.useState<File | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const { uploadImage } = useCloudinary();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,17 +67,7 @@ const AddClient = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
     const { fullName, position } = values;
-    const formData = new FormData();
-    formData.append('file', avatarImg!);
-    formData.append('upload_preset', 'fn1pbozo');
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUD_NAME}/image/upload`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-    const imageData = await res.json();
+    const imageData = await uploadImage(avatarImg!);
     const data = {
       name: fullName,
       position: position,
