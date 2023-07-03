@@ -15,6 +15,7 @@ import { ClientContext } from '@/context/clients';
 import { useContext } from 'react';
 import { useToast } from './ui/use-toast';
 import { ToastAction } from './ui/toast';
+import { useCloudinary } from '@/hooks/useCloudinary';
 
 const UserCard = ({
   name,
@@ -29,6 +30,7 @@ const UserCard = ({
 }) => {
   const { clients, setClients } = useContext(ClientContext);
   const { toast } = useToast();
+  const { deleteImage } = useCloudinary();
 
   const fallback =
     name.split(' ').length > 1
@@ -37,12 +39,15 @@ const UserCard = ({
 
   const deleteClient = () => {
     const prevClients = [...clients];
-    const updatedClients = clients.filter((client) => client.id !== id);
-    setClients(updatedClients);
-    const idTimeout = setTimeout(() => {
-      fetch(`/api/clients/${id}`, {
+    setClients(clients.filter((client) => client.id !== id));
+    const idTimeout = setTimeout(async () => {
+      const res = await fetch(`/api/clients/${id}`, {
         method: 'DELETE',
       });
+      if (res.status === 200) {
+        const data = await res.json();
+        deleteImage(data.client.avatar);
+      }
     }, 3000);
     toast({
       variant: 'delete',
