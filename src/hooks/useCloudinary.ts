@@ -14,5 +14,12 @@ export const useCloudinary = () => {
     return imageData;
   };
 
-  return { uploadImage };
+  const deleteImage = async (avatar: string) => {
+    const publicId = avatar.split('/').pop()?.split('.')[0];
+    await fetch(`/api/cloudinary/${publicId}`, {
+      method: 'DELETE',
+    });
+  };
+
+  return { uploadImage, deleteImage };
 };
